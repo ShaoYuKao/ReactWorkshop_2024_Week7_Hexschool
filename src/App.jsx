@@ -1,15 +1,10 @@
 import './App.css'
+import { RouterProvider } from 'react-router-dom';
+import { router } from './routes';
 
 function App() {
 
-  return (
-    <>
-      <div className="container">
-        <h1>Hello, Bootstrap!</h1>
-        <button className="btn btn-primary">Click me</button>
-      </div>
-    </>
-  )
+  return <RouterProvider router={router} />
 }
 
 export default App

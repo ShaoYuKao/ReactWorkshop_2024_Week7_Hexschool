@@ -2,9 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import * as bootstrap from "bootstrap";
-import FullPageLoading from '../../components/FullPageLoading';
-import Pagination from '../../components/Pagination';
-import AddToCartModal from '../../components/AddToCartModal';
+import FullPageLoading from '@/components/FullPageLoading';
+import Pagination from '@/components/Pagination';
+import AddToCartModal from '@/components/AddToCartModal';
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const API_PATH = import.meta.env.VITE_API_PATH;

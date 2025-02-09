@@ -2,10 +2,10 @@ import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import * as bootstrap from "bootstrap";
-import FullPageLoading from '../../components/FullPageLoading';
-import ClearCartModal from '../../components/ClearCartModal';
-import AddToCartModal from '../../components/AddToCartModal';
-import RemoveCartItemModal from '../../components/RemoveCartItemModal';
+import FullPageLoading from '@/components/FullPageLoading';
+import ClearCartModal from '@/components/ClearCartModal';
+import AddToCartModal from '@/components/AddToCartModal';
+import RemoveCartItemModal from '@/components/RemoveCartItemModal';
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const API_PATH = import.meta.env.VITE_API_PATH;

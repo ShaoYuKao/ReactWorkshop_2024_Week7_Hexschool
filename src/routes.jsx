@@ -1,17 +1,17 @@
 import { createHashRouter } from "react-router-dom";
 
-import FrontendLayout from "./layouts/FrontendLayout";
-import AdminLayout from "./layouts/AdminLayout";
+import FrontendLayout from "@/layouts/FrontendLayout";
+import AdminLayout from "@/layouts/AdminLayout";
 
-import Home from "./pages/front/Home";
-import Product from "./pages/front/Product";
-import SingleProduct from "./pages/front/SingleProduct";
-import Cart from "./pages/front/Cart";
-import Login from "./pages/front/Login";
-import NotFound from "./pages/front/NotFound";
+import Home from "@/pages/front/Home";
+import Product from "@/pages/front/Product";
+import SingleProduct from "@/pages/front/SingleProduct";
+import Cart from "@/pages/front/Cart";
+import Login from "@/pages/front/Login";
+import NotFound from "@/pages/front/NotFound";
 
-import AdminProducts from "./pages/admin/AdminProducts";
-import AdminOrders from "./pages/admin/AdminOrders";
+import AdminProducts from "@/pages/admin/AdminProducts";
+import AdminOrders from "@/pages/admin/AdminOrders";
 
 export const router = createHashRouter([
   {

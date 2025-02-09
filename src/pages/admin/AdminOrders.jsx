@@ -2,14 +2,25 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { getToken, clearToken, checkAdmin, redirectToLogin } from '@/utils/auth';
 import FullPageLoading from '@/components/FullPageLoading';
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-tw';
+dayjs.locale('zh-tw');
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const API_PATH = import.meta.env.VITE_API_PATH;
 
 function AdminOrders() {
-  const [loading, setLoading] = useState(false); // 加載狀態
+  const [loading, setLoading] = useState(true); // 加載狀態
   const [orders, setOrders] = useState([]); // 訂單清單
   const [page, setPage] = useState(1); // 頁碼
+  const [productModal, setProductModal] = useState({
+    isShow: false,
+    products: {}
+  }); // 產品清單 Modal
+  const [userModal, setUserModal] = useState({
+    isShow: false,
+    user: {}
+  }); // 訂單者資訊 Modal
 
   useEffect(() => {
     if (getToken()) {
@@ -22,7 +33,6 @@ function AdminOrders() {
       } else {
         fetchOrders(page);
       }
-      setLoading(false);
     } else {
       goToLoginPage();
     }
@@ -116,25 +126,173 @@ function AdminOrders() {
     redirectToLogin(navigate);
   };
 
+  /**
+   * 開啟產品 Modal。
+   * 
+   * @param {Array} products - 要顯示在 Modal 中的產品列表。
+   */
+  const openProductModal = (products) => {
+    setProductModal({
+      isShow: true,
+      products: products
+    });
+  };
+
+  /**
+   * 關閉產品 Modal。
+   * 將產品 Modal 的狀態設置為不顯示，並清空產品資料。
+   */
+  const closeProductModal = () => {
+    setProductModal({
+      isShow: false,
+      products: {}
+    });
+  };
+
+  /**
+   * 開啟用戶 Modal 並設置用戶信息。
+   * 
+   * @param {Object} order - 訂單對象。
+   * @param {Object} order.user - 訂單中的用戶對象。
+   * @param {string} order.message - 訂單中的消息。
+   */
+  const openUserModal = (order) => {
+    const user = order.user;
+    user.message = order.message;
+    setUserModal({
+      isShow: true,
+      user: user
+    });
+  };
+
+  /**
+   * 關閉使用者 Modal。
+   * 將 `isShow` 設為 `false` 並重置 `user` 為空對象。
+   */
+  const closeUserModal = () => {
+    setUserModal({
+      isShow: false,
+      user: {}
+    });
+  };
+
   return (
     <>
       {loading && <FullPageLoading />}
       <h2 className="text-center">訂單管理</h2>
-      <div>
+      <div className="table-responsive">
         {orders.length > 0 ? (
-          <ul>
-            {orders.map(order => (
-              <li key={order.id}>
-                訂單 ID: {order.id}
-                <button onClick={() => handleDeleteOrder(order.id)}>刪除</button>
-              </li>
-            ))}
-          </ul>
+          <table className="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>編號</th>
+                <th>產品數量</th>
+                <th>已付款</th>
+                <th>總金額</th>
+                <th>時間</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map(order => (
+                <tr key={order.id}>
+                  <td>{order.id}</td>
+                  <td>{Object.keys(order.products).length}</td>
+                  <td>{order.is_paid ? '是' : '否'}</td>
+                  <td>{order.total}</td>
+                  <td>{dayjs(order.create_at*1000).format('YYYY-MM-DD HH:mm:ss')}</td>
+                  <td>
+                    <button className="btn btn-info btn-sm me-1" onClick={() => openProductModal(order.products)}>產品清單</button>
+                    <button className="btn btn-warning btn-sm me-1" onClick={() => openUserModal(order)}>訂單者資訊</button>
+                    <button className="btn btn-danger btn-sm" onClick={() => handleDeleteOrder(order.id)}>刪除</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         ) : (
           <p>目前沒有訂單</p>
         )}
-        <button onClick={handleClearOrders}>全部刪除</button>
+        <button className="btn btn-danger" onClick={handleClearOrders}>全部刪除</button>
       </div>
+
+      {/* 產品清單 Modal */}
+      <div className={`modal fade ${productModal.isShow ? 'show' : ''}`} style={{ display: productModal.isShow ? 'block' : 'none' }} tabIndex="-1">
+        <div className="modal-dialog modal-xl">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">產品清單</h5>
+              <button type="button" className="btn-close" onClick={closeProductModal}></button>
+            </div>
+            <div className="modal-body">
+              <table className="table table-striped">
+                <thead>
+                  <tr>
+                    <th>分類</th>
+                    <th>圖片</th>
+                    <th>商品名稱</th>
+                    <th>價格</th>
+                    <th>數量</th>
+                    <th>總計</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.values(productModal.products).map(product => (
+                    <tr key={product.id}>
+                      <td>{product.product.category}</td>
+                      <td><img src={product.product.imageUrl} alt={product.product.title} style={{ width: '50px', height: '50px' }} /></td>
+                      <td>{product.product.title}</td>
+                      <td>{product.product.price}</td>
+                      <td>{product.qty}</td>
+                      <td>{product.total}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      {productModal.isShow && <div className="modal-backdrop fade show"></div>}
+
+      {/* 訂單者資訊 Modal */}
+      <div className={`modal fade ${userModal.isShow ? 'show' : ''}`} style={{ display: userModal.isShow ? 'block' : 'none' }} tabIndex="-1">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">訂單者資訊</h5>
+              <button type="button" className="btn-close" onClick={closeUserModal}></button>
+            </div>
+            <div className="modal-body">
+              <table className="table table-striped">
+                <tbody>
+                  <tr>
+                    <th>Email</th>
+                    <td>{userModal.user.email}</td>
+                  </tr>
+                  <tr>
+                    <th>收件人姓名</th>
+                    <td>{userModal.user.name}</td>
+                  </tr>
+                  <tr>
+                    <th>收件人電話</th>
+                    <td>{userModal.user.tel}</td>
+                  </tr>
+                  <tr>
+                    <th>收件人地址</th>
+                    <td>{userModal.user.address}</td>
+                  </tr>
+                  <tr>
+                    <th>留言</th>
+                    <td>{userModal.user.message}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      {userModal.isShow && <div className="modal-backdrop fade show"></div>}
     </>
   );
 }

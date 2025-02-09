@@ -50,6 +50,10 @@ export const checkAdmin = async () => {
   }
 };
 
+/**
+ * 返回登入頁面
+ * @param {Function} navigate - 用於導航的函數
+ */
 export const redirectToLogin = (navigate) => {
   navigate("/login");
 };

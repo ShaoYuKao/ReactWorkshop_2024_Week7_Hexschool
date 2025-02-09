@@ -5,7 +5,7 @@ function AdminLayout() {
   const { pathname } = location;
 
   return (
-    <div>
+    <>
       <header className="p-3">
         <div className="container">
 
@@ -36,18 +36,18 @@ function AdminLayout() {
         </div>
       </header>
 
-      <main>
+      <main className="content">
         <div className="container">
           <Outlet />
         </div>
       </main>
       
-      <footer>
+      <footer className="bg-light text-center py-3">
         <div className="container">
-          <p>© 2024 React 作品實戰冬季班 第六週</p>
+          <p className="text-center">© 2024 React 作品實戰冬季班 第六週</p>
         </div>
       </footer>
-    </div>
+    </>
   );
 }
 

@@ -4,7 +4,7 @@ import { getToken, clearToken, checkAdmin, redirectToLogin } from '@/utils/auth'
 import FullPageLoading from '@/components/FullPageLoading';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-tw';
-import Pagination from '@/components/Pagination'; // 引入 Pagination 元件
+import Pagination from '@/components/Pagination';
 dayjs.locale('zh-tw');
 
 const API_BASE = import.meta.env.VITE_API_BASE;
@@ -23,6 +23,7 @@ function AdminOrders() {
     isShow: false,
     user: {}
   }); // 訂單者資訊 Modal
+  const [clearOrdersModal, setClearOrdersModal] = useState(false); // 清空訂單 Modal
 
   useEffect(() => {
     if (getToken()) {
@@ -104,7 +105,7 @@ function AdminOrders() {
    * @returns {Promise<void>} 無返回值
    * @throws 會在請求失敗時拋出錯誤並在控制台顯示錯誤訊息
    */
-  const handleClearOrders = async () => {
+  const handleConfirmClearOrders = async () => {
     setLoading(true);
     try {
       const result = await axios.delete(`${API_BASE}/api/${API_PATH}/admin/orders/all`);
@@ -114,12 +115,27 @@ function AdminOrders() {
       }
       // 清空訂單清單
       setOrders([]);
+      closeClearOrdersModal();
     } catch (error) {
       console.error("全部刪除失敗", error);
       alert("全部刪除失敗");
     } finally {
       setLoading(false);
     }
+  };
+
+  /**
+   * 開啟清空訂單 Modal。
+   */
+  const openClearOrdersModal = () => {
+    setClearOrdersModal(true);
+  };
+
+  /**
+   * 關閉清空訂單 Modal。
+   */
+  const closeClearOrdersModal = () => {
+    setClearOrdersModal(false);
   };
 
   /**
@@ -216,9 +232,12 @@ function AdminOrders() {
         ) : (
           <p>目前沒有訂單</p>
         )}
-        <button className="btn btn-danger" onClick={handleClearOrders}>全部刪除</button>
+        <button className="btn btn-danger" onClick={openClearOrdersModal}>全部刪除</button>
       </div>
-      <Pagination totalPages={totalPages} currentPage={page} onPageChange={setPage} /> {/* 加入 Pagination 元件 */}
+
+      {/* Pagination */}
+      <Pagination totalPages={totalPages} currentPage={page} onPageChange={setPage} />
+      {/* Pagination */}
 
       {/* 產品清單 Modal */}
       <div className={`modal fade ${productModal.isShow ? 'show' : ''}`} style={{ display: productModal.isShow ? 'block' : 'none' }} tabIndex="-1">
@@ -297,6 +316,26 @@ function AdminOrders() {
         </div>
       </div>
       {userModal.isShow && <div className="modal-backdrop fade show"></div>}
+
+      {/* 確認清空訂單 Modal */}
+      <div className={`modal fade ${clearOrdersModal ? 'show' : ''}`} style={{ display: clearOrdersModal ? 'block' : 'none' }} tabIndex="-1">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title fw-bold text-danger" id="clearCartModalLabel">確認清空訂單</h5>
+              <button type="button" className="btn-close" onClick={closeClearOrdersModal} aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <p>您確定要清空所有訂單嗎？</p>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" onClick={closeClearOrdersModal}>取消</button>
+              <button type="button" className="btn btn-danger" onClick={handleConfirmClearOrders}>確定</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {clearOrdersModal && <div className="modal-backdrop fade show"></div>}
     </>
   );
 }

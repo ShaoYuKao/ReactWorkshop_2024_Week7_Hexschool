@@ -24,10 +24,10 @@ function AdminOrders() {
     user: {}
   }); // 訂單者資訊 Modal
   const [clearOrdersModal, setClearOrdersModal] = useState(false); // 清空訂單 Modal
-  const [deleteOrderModal, setDeleteOrderModal] = useState({ // 刪除訂單 Modal
+  const [deleteOrderModal, setDeleteOrderModal] = useState({
     isShow: false,
     orderId: null
-  });
+  }); // 刪除訂單 Modal
 
   useEffect(() => {
     if (getToken()) {

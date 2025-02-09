@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import FullPageLoading from '@/components/FullPageLoading';
-import { clearToken } from '@/utils/auth';
+import { clearToken, redirectToLogin } from '@/utils/auth';
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 
@@ -39,7 +39,7 @@ function AdminLayout() {
       axios.defaults.headers.common["Authorization"] = undefined;
       clearToken();
       setLoading(false);
-      navigate("/login");
+      redirectToLogin(navigate);
     }
   };
 

@@ -49,3 +49,7 @@ export const checkAdmin = async () => {
     return result;
   }
 };
+
+export const redirectToLogin = (navigate) => {
+  navigate("/login");
+};

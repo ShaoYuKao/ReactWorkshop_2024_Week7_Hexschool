@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import * as bootstrap from "bootstrap";
-import { getToken, clearToken, checkAdmin } from '@/utils/auth';
+import { getToken, clearToken, checkAdmin, redirectToLogin } from '@/utils/auth';
 import FullPageLoading from '@/components/FullPageLoading';
 import ProductModal from '@/components/ProductModal';
 import Pagination from '@/components/Pagination';
@@ -68,7 +68,7 @@ function AdminProducts() {
    * 返回登入頁面
    */
   const goToLoginPage = () => {
-    navigate("/login");
+    redirectToLogin(navigate);
   }
 
   /**

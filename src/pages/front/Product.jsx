@@ -112,7 +112,7 @@ function Product() {
   return (
     <>
       {loading && <FullPageLoading />}
-      <h2 className="text-center">產品 Page</h2>
+      <h2 className="text-center">產品清單</h2>
       <div className="row g-3 align-items-center">
         <div className="col-auto">
           <label htmlFor="searchCategory">分類：</label>

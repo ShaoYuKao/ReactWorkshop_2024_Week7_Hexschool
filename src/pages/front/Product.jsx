@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import * as bootstrap from "bootstrap";
 import FullPageLoading from '../../components/FullPageLoading';
 import Pagination from '../../components/Pagination';
+import AddToCartModal from '../../components/AddToCartModal';
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const API_PATH = import.meta.env.VITE_API_PATH;
@@ -14,8 +16,16 @@ function Product() {
   const [totalPages, setTotalPages] = useState(1); // 總頁數
   const [searchTerm, setSearchTerm] = useState(''); // 搜尋關鍵字
   const [loading, setLoading] = useState(false); // 加載狀態
+  const [cartProduct, setCartProduct] = useState(null); // 加到購物車的產品
+  const [cartQty, setCartQty] = useState(1);  // 加到購物車的數量
+  const [mode, setMode] = useState('add'); // 模式
+  const addToCartModalRef = useRef(null);
 
   useEffect(() => {
+    addToCartModalRef.current = new bootstrap.Modal(document.getElementById('addToCartModal'), {
+      backdrop: 'static'
+    });
+
     setLoading(true); // 開始加載
     axios.get(`${API_BASE}/api/${API_PATH}/products?page=${page}&category=${searchTerm}`)
       .then(response => {
@@ -49,6 +59,54 @@ function Product() {
     if (newPage > 0 && newPage <= totalPages) {
       setPage(newPage);
     }
+  };
+
+  /**
+   * 處理加到購物車 Modal 的函式
+   * @param {string} productId - 產品ID
+   * @returns {void}
+   */
+  const handleAddToCart = (productId) => {
+    setLoading(true); // 開始加載
+    axios.get(`${API_BASE}/api/${API_PATH}/product/${productId}`)
+      .then(response => {
+        setCartProduct(response.data.product);  // 設定加到購物車的產品
+        setCartQty(1); // 重置數量為1
+        setMode('add'); // 設定模式為新增
+        addToCartModalRef.current.show();
+      })
+      .catch(error => {
+        console.error('Error fetching product details:', error);
+        alert('加到購物車失敗!!');
+      })
+      .finally(() => {
+        setLoading(false); // 結束加載
+      });
+  };
+
+  /**
+   * 處理加入購物車的 API 呼叫
+   * @returns {void}
+   */
+  const handleConfirmAddToCart = () => {
+    setLoading(true); // 開始加載
+    axios.post(`${API_BASE}/api/${API_PATH}/cart`, {
+      data: {
+        product_id: cartProduct.id,
+        qty: cartQty
+      }
+    })
+      .then(response => {
+        alert('已加入購物車');
+        addToCartModalRef.current.hide();
+      })
+      .catch(error => {
+        console.error('Error adding to cart:', error);
+        alert('加入購物車失敗!!');
+      })
+      .finally(() => {
+        setLoading(false); // 結束加載
+      });
   };
   
   return (
@@ -93,6 +151,10 @@ function Product() {
               <td>
                 <div className="btn-group btn-group-sm">
                   <Link to={`/product/${product.id}`} className="btn btn-outline-secondary">查看更多</Link>
+                  <button type="button" className="btn btn-outline-danger" onClick={() => handleAddToCart(product.id)}>
+                    <i className="fas fa-spinner fa-pulse"></i>
+                    加到購物車
+                  </button>
                 </div>
               </td>
             </tr>
@@ -110,6 +172,17 @@ function Product() {
         )
       }
       {/* Pagination */}
+
+      {/* 加到購物車Modal */}
+      <AddToCartModal 
+        product={cartProduct} 
+        qty={cartQty} 
+        setQty={setCartQty} 
+        // onConfirm={mode === 'edit' ? handleConfirmEditCart : handleConfirmAddToCart} 
+        onConfirm={handleConfirmAddToCart} 
+        mode={mode}
+      />
+      {/* 加到購物車Modal */}
     </>
   );
 }

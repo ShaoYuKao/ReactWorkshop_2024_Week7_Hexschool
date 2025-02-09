@@ -4,8 +4,7 @@ function AddToCartModal({ product, qty, setQty, onConfirm, mode }) {
       id="addToCartModal" 
       className="modal fade" 
       tabIndex="-1" 
-      aria-labelledby="addToCartModalLabel" 
-      aria-hidden="true"
+      aria-labelledby="addToCartModalLabel"
     >
       <div className="modal-dialog">
         <div className="modal-content">

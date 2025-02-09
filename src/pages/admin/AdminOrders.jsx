@@ -86,6 +86,16 @@ function AdminOrders() {
     openDeleteOrderModal(orderId);
   };
 
+  /**
+   * handleConfirmDeleteOrder 函式用於確認刪除訂單。
+   * 
+   * @returns {void}
+   * 
+   * 此函式會先將 loading 狀態設為 true，然後嘗試呼叫 axios.delete 來刪除指定的訂單。
+   * 如果刪除成功，會重新撈取訂單清單並關閉刪除訂單的模態框。
+   * 如果刪除失敗，會在控制台顯示錯誤訊息並彈出警告框。
+   * 最後，無論成功或失敗，都會將 loading 狀態設為 false。
+   */
   const handleConfirmDeleteOrder = async () => {
     setLoading(true);
     try {
@@ -105,6 +115,11 @@ function AdminOrders() {
     }
   };
 
+  /**
+   * 開啟刪除訂單的模態框。
+   * 
+   * @param {string} orderId - 要刪除的訂單 ID。
+   */
   const openDeleteOrderModal = (orderId) => {
     setDeleteOrderModal({
       isShow: true,
@@ -112,6 +127,10 @@ function AdminOrders() {
     });
   };
 
+  /**
+   * 關閉刪除訂單的模態框。
+   * 將模態框的顯示狀態設置為 false，並將 orderId 設置為 null。
+   */
   const closeDeleteOrderModal = () => {
     setDeleteOrderModal({
       isShow: false,

@@ -4,6 +4,7 @@ import { getToken, clearToken, checkAdmin, redirectToLogin } from '@/utils/auth'
 import FullPageLoading from '@/components/FullPageLoading';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-tw';
+import Pagination from '@/components/Pagination'; // 引入 Pagination 元件
 dayjs.locale('zh-tw');
 
 const API_BASE = import.meta.env.VITE_API_BASE;
@@ -13,6 +14,7 @@ function AdminOrders() {
   const [loading, setLoading] = useState(true); // 加載狀態
   const [orders, setOrders] = useState([]); // 訂單清單
   const [page, setPage] = useState(1); // 頁碼
+  const [totalPages, setTotalPages] = useState(1); // 總頁數
   const [productModal, setProductModal] = useState({
     isShow: false,
     products: {}
@@ -57,6 +59,7 @@ function AdminOrders() {
         return;
       }
       setOrders(response.data.orders);
+      setTotalPages(response.data.pagination.total_pages); // 取得總頁數
     } catch (error) {
       console.error("取得訂單失敗", error);
       alert("取得訂單失敗");
@@ -215,6 +218,7 @@ function AdminOrders() {
         )}
         <button className="btn btn-danger" onClick={handleClearOrders}>全部刪除</button>
       </div>
+      <Pagination totalPages={totalPages} currentPage={page} onPageChange={setPage} /> {/* 加入 Pagination 元件 */}
 
       {/* 產品清單 Modal */}
       <div className={`modal fade ${productModal.isShow ? 'show' : ''}`} style={{ display: productModal.isShow ? 'block' : 'none' }} tabIndex="-1">

@@ -1,11 +1,51 @@
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { useState } from "react";
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import FullPageLoading from '@/components/FullPageLoading';
+import { clearToken } from '@/utils/auth';
+
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 function AdminLayout() {
+  const navigate = useNavigate();
   const location = useLocation();
   const { pathname } = location;
+  const [loading, setLoading] = useState(false); // 加載狀態
+
+  /**
+   * 執行登出操作的非同步函式。
+   * 
+   * 此函式會向伺服器發送登出請求，並根據伺服器回應的結果進行處理。
+   * 如果登出成功，會清除瀏覽器中的 cookie 並更新認證狀態。
+   * 如果登出失敗，會在控制台顯示錯誤訊息。
+   * 
+   * @async
+   * @function logout
+   * @throws {Error} 如果伺服器回應登出失敗，會拋出錯誤。
+   */
+  const logout = async () => {
+    setLoading(true);
+    const url = `${API_BASE}/logout`;
+
+    try {
+      const res = await axios.post(url);
+      const { success, message } = res.data;
+      if (!success) {
+        throw new Error(message);
+      }
+    } catch (error) {
+      console.error("登出失敗", error);
+    } finally {
+      axios.defaults.headers.common["Authorization"] = undefined;
+      clearToken();
+      setLoading(false);
+      navigate("/login");
+    }
+  };
 
   return (
     <>
+      {loading && <FullPageLoading />}
       <header className="p-3">
         <div className="container">
 
@@ -28,7 +68,7 @@ function AdminLayout() {
                 </ul>
 
                 <form className="d-flex">
-                  <button className="btn btn-outline-success" type="button">登出</button>
+                  <button className="btn btn-outline-success" type="button" onClick={logout}>登出</button>
                 </form>
               </div>
             </div>

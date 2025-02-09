@@ -24,6 +24,10 @@ function AdminOrders() {
     user: {}
   }); // 訂單者資訊 Modal
   const [clearOrdersModal, setClearOrdersModal] = useState(false); // 清空訂單 Modal
+  const [deleteOrderModal, setDeleteOrderModal] = useState({ // 刪除訂單 Modal
+    isShow: false,
+    orderId: null
+  });
 
   useEffect(() => {
     if (getToken()) {
@@ -79,15 +83,20 @@ function AdminOrders() {
    * @throws {Error} - 如果刪除訂單失敗，則拋出錯誤。
    */
   const handleDeleteOrder = async (orderId) => {
+    openDeleteOrderModal(orderId);
+  };
+
+  const handleConfirmDeleteOrder = async () => {
     setLoading(true);
     try {
-      const result =  await axios.delete(`${API_BASE}/api/${API_PATH}/admin/order/${orderId}`);
+      const result =  await axios.delete(`${API_BASE}/api/${API_PATH}/admin/order/${deleteOrderModal.orderId}`);
       if (!result.data.success) {
         console.error("刪除訂單失敗", result.data);
         return;
       }
       // 重新撈取訂單清單
       fetchOrders(page);
+      closeDeleteOrderModal();
     } catch (error) {
       console.error("刪除訂單失敗", error);
       alert("刪除訂單失敗");
@@ -95,13 +104,27 @@ function AdminOrders() {
       setLoading(false);
     }
   };
+
+  const openDeleteOrderModal = (orderId) => {
+    setDeleteOrderModal({
+      isShow: true,
+      orderId: orderId
+    });
+  };
+
+  const closeDeleteOrderModal = () => {
+    setDeleteOrderModal({
+      isShow: false,
+      orderId: null
+    });
+  };
   
   /**
    * 清空所有訂單的處理函式。
    * 此函式會發送一個請求至伺服器以刪除所有訂單，並在成功後清空本地的訂單清單。
    * 
    * @async
-   * @function handleClearOrders
+   * @function handleConfirmClearOrders
    * @returns {Promise<void>} 無返回值
    * @throws 會在請求失敗時拋出錯誤並在控制台顯示錯誤訊息
    */
@@ -336,6 +359,26 @@ function AdminOrders() {
         </div>
       </div>
       {clearOrdersModal && <div className="modal-backdrop fade show"></div>}
+
+      {/* 刪除確認 Modal */}
+      <div className={`modal fade ${deleteOrderModal.isShow ? 'show' : ''}`} style={{ display: deleteOrderModal.isShow ? 'block' : 'none' }} tabIndex="-1">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title fw-bold text-danger" id="clearCartModalLabel">確認刪除訂單</h5>
+              <button type="button" className="btn-close" onClick={closeDeleteOrderModal} aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <p>您確定要刪除此訂單嗎？</p>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-secondary" onClick={closeDeleteOrderModal}>取消</button>
+              <button type="button" className="btn btn-danger" onClick={handleConfirmDeleteOrder}>確定</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {deleteOrderModal.isShow && <div className="modal-backdrop fade show"></div>}
     </>
   );
 }

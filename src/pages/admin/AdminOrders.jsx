@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/zh-tw';
 import Pagination from '@/components/Pagination';
 import { useDispatch } from 'react-redux';
-import { createAsyncMessage, actionType } from '@/store/messageSlice';
+import { createAsyncMessage, MESSAGE_TYPES } from '@/store/messageSlice';
 dayjs.locale('zh-tw');
 
 const API_BASE = import.meta.env.VITE_API_BASE;
@@ -63,14 +63,14 @@ function AdminOrders() {
       const response = await axios.get(`${API_BASE}/api/${API_PATH}/admin/orders?page=${pageNumber}`);
       if(!response.data.success){
         console.error("取得訂單失敗", response.data);
-        dispatch(createAsyncMessage({ type: actionType.fail, message: "取得訂單失敗" }));
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: "取得訂單失敗" }));
         return;
       }
       setOrders(response.data.orders);
       setTotalPages(response.data.pagination.total_pages); // 取得總頁數
     } catch (error) {
       console.error("取得訂單失敗", error);
-      dispatch(createAsyncMessage({ type: actionType.fail, message: "取得訂單失敗: " + error }));
+      dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: "取得訂單失敗: " + error }));
     } finally {
       setLoading(false);
     }
@@ -105,7 +105,7 @@ function AdminOrders() {
       const result =  await axios.delete(`${API_BASE}/api/${API_PATH}/admin/order/${deleteOrderModal.orderId}`);
       if (!result.data.success) {
         console.error("刪除訂單失敗", result.data);
-        dispatch(createAsyncMessage({ type: actionType.fail, message: "刪除訂單失敗" }));
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: "刪除訂單失敗" }));
         return;
       }
       // 重新撈取訂單清單
@@ -113,7 +113,7 @@ function AdminOrders() {
       closeDeleteOrderModal();
     } catch (error) {
       console.error("刪除訂單失敗", error);
-      dispatch(createAsyncMessage({ type: actionType.fail, message: "刪除訂單失敗: " + error }));
+      dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: "刪除訂單失敗: " + error }));
     } finally {
       setLoading(false);
     }
@@ -157,7 +157,7 @@ function AdminOrders() {
       const result = await axios.delete(`${API_BASE}/api/${API_PATH}/admin/orders/all`);
       if (!result.data.success) {
         console.error("全部刪除失敗", result.data);
-        dispatch(createAsyncMessage({ type: actionType.fail, message: "全部刪除失敗" }));
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: "全部刪除失敗" }));
         return;
       }
       // 清空訂單清單
@@ -165,7 +165,7 @@ function AdminOrders() {
       closeClearOrdersModal();
     } catch (error) {
       console.error("全部刪除失敗", error);
-      dispatch(createAsyncMessage({ type: actionType.fail, message: "全部刪除失敗: " + error }));
+      dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: "全部刪除失敗: " + error }));
     } finally {
       setLoading(false);
     }

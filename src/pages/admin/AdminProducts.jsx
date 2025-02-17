@@ -7,7 +7,7 @@ import FullPageLoading from '@/components/FullPageLoading';
 import ProductModal from '@/components/ProductModal';
 import Pagination from '@/components/Pagination';
 import { useDispatch } from 'react-redux';
-import { createAsyncMessage, actionType } from '@/store/messageSlice';
+import { createAsyncMessage, MESSAGE_TYPES } from '@/store/messageSlice';
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const API_PATH = import.meta.env.VITE_API_PATH;
@@ -138,12 +138,12 @@ function AdminProducts() {
     }
 
     if (false === checkPrice(tempProduct.origin_price)) {
-      dispatch(createAsyncMessage({ type: actionType.warning, message: "原價請輸入大於 0 的數字" }));
+      dispatch(createAsyncMessage({ type: MESSAGE_TYPES.WARNING, message: "原價請輸入大於 0 的數字" }));
       return;
     }
 
     if (false === checkPrice(tempProduct.price)) {
-      dispatch(createAsyncMessage({ type: actionType.warning, message: "售價請輸入大於 0 的數字" }));
+      dispatch(createAsyncMessage({ type: MESSAGE_TYPES.WARNING, message: "售價請輸入大於 0 的數字" }));
       return;
     }
 
@@ -171,11 +171,11 @@ function AdminProducts() {
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
-      dispatch(createAsyncMessage({ type: actionType.success, message: tempProduct.id ? "編輯商品成功" : "新增商品成功" }));
+      dispatch(createAsyncMessage({ type: MESSAGE_TYPES.SUCCESS, message: tempProduct.id ? "編輯商品成功" : "新增商品成功" }));
       clearTempProduct();
       fetchProducts();
     } catch (error) {
-      dispatch(createAsyncMessage({ type: actionType.fail, message: (tempProduct.id ? "編輯" : "新增") + "商品失敗: " + error }));
+      dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: (tempProduct.id ? "編輯" : "新增") + "商品失敗: " + error }));
       openProductModal();
     } finally {
       setLoading(false);
@@ -189,27 +189,27 @@ function AdminProducts() {
   const checkRequired = () => {
     if (!tempProduct.imageUrl || !tempProduct.title || !tempProduct.category || !tempProduct.unit || !tempProduct.origin_price || !tempProduct.price) {
       if (!tempProduct.imageUrl) {
-        dispatch(createAsyncMessage({ type: actionType.warning, message: "請輸入圖片網址" }));
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.WARNING, message: "請輸入圖片網址" }));
         return false;
       };
       if (!tempProduct.title) {
-        dispatch(createAsyncMessage({ type: actionType.warning, message: "請輸入標題" }));
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.WARNING, message: "請輸入標題" }));
         return false;
       }
       if (!tempProduct.category) {
-        dispatch(createAsyncMessage({ type: actionType.warning, message: "請輸入分類" }));
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.WARNING, message: "請輸入分類" }));
         return false;
       }
       if (!tempProduct.unit) {
-        dispatch(createAsyncMessage({ type: actionType.warning, message: "請輸入單位" }));
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.WARNING, message: "請輸入單位" }));
         return false;
       }
       if (!tempProduct.origin_price) {
-        dispatch(createAsyncMessage({ type: actionType.warning, message: "請輸入原價" }));
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.WARNING, message: "請輸入原價" }));
         return false;
       }
       if (!tempProduct.price) {
-        dispatch(createAsyncMessage({ type: actionType.warning, message: "請輸入售價" }));
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.WARNING, message: "請輸入售價" }));
         return false;
       }
     }
@@ -266,7 +266,7 @@ function AdminProducts() {
       setTotalPages(total_pages);
     } catch (error) {
       console.error("取得產品資料失敗", error);
-      dispatch(createAsyncMessage({ type: actionType.fail, message: "取得產品資料失敗: " + error }));
+      dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: "取得產品資料失敗: " + error }));
     } finally {
       setLoading(false);
     }
@@ -312,10 +312,10 @@ function AdminProducts() {
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
-      dispatch(createAsyncMessage({ type: actionType.success, message: "刪除商品成功" }));
+      dispatch(createAsyncMessage({ type: MESSAGE_TYPES.SUCCESS, message: "刪除商品成功" }));
       fetchProducts();
     } catch (error) {
-      dispatch(createAsyncMessage({ type: actionType.fail, message: "刪除商品失敗: " + error }));
+      dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: "刪除商品失敗: " + error }));
     } finally {
       setLoading(false);
     }

@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import FullPageLoading from '@/components/FullPageLoading';
+import { useDispatch } from 'react-redux';
+import { createAsyncMessage, MESSAGE_TYPES } from '@/store/messageSlice';
 import './Login.css';
 
 const API_BASE = import.meta.env.VITE_API_BASE;
@@ -9,11 +11,29 @@ const API_PATH = import.meta.env.VITE_API_PATH;
 
 function index() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   }); // 登入表單資料
   const [loading, setLoading] = useState(false); // 加載狀態
+  const [errors, setErrors] = useState({}); // 錯誤訊息狀態
+
+  /**
+   * 驗證表單資料的函式
+   * @returns {boolean} 是否通過驗證
+   */
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.username) {
+      newErrors.username = "Email address is required";
+    }
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   /**
    * 使用者點擊[登入]按鈕，處理表單提交的異步函數
@@ -21,6 +41,7 @@ function index() {
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validate()) return; // 驗證不通過則返回
     setLoading(true);
     try {
       const response = await axios.post(`${API_BASE}/admin/signin`, formData);
@@ -34,7 +55,8 @@ function index() {
       // 轉址到 /admin/products
       navigate("/admin/products");
     } catch (error) {
-      alert("登入失敗: " + error);
+      console.log("登入失敗", error);
+      dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: "帳號或密碼錯誤"}));
     } finally {
       setLoading(false);
     }
@@ -73,6 +95,7 @@ function index() {
                 autoFocus
               />
               <label htmlFor="username">Email address</label>
+              {errors.username && <div className="text-danger">{errors.username}</div>}
             </div>
             <div className="form-floating">
               <input
@@ -85,6 +108,7 @@ function index() {
                 required
               />
               <label htmlFor="password">Password</label>
+              {errors.password && <div className="text-danger">{errors.password}</div>}
             </div>
             <button
               className="btn btn-lg btn-primary w-100 mt-3"
@@ -96,7 +120,6 @@ function index() {
         </div>
       </div>
     </>
-    
   );
 }
 

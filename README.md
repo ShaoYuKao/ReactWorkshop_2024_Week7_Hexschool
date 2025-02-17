@@ -1,4 +1,4 @@
-# 第六週 - Vite、React Router
+# 第七週 - Redux 與 Redux Toolkit
 
 > 2024 React 作品實戰冬季班 - hexschool
 
@@ -22,8 +22,9 @@
 
 ### 此任務你會獲得以下技能
 
-- React Router
-- Vite
+- 示範後台製作
+- 最終作業規劃技巧 User Story、素材搜集
+- Redux toolkit
 
 ## 指令列表
 
@@ -91,6 +92,78 @@
             auth.js
 ```
 
+# 資料夾結構
+
+當前專案的資料夾及檔案結構如下：
+
+```
+|   .copilot-commit-message-instructions.md
+|   .env
+|   .gitignore
+|   eslint.config.js
+|   index.html
+|   ouput.txt
+|   package-lock.json
+|   package.json
+|   README.md
+|   vite.config.js
+|       
++---public
+|       vite.svg
+|       
+\---src
+    |   App.css
+    |   App.jsx
+    |   index.css
+    |   main.jsx
+    |   routes.jsx
+    |   
+    +---assets
+    |       react.svg
+    |       
+    +---components
+    |   |   AddToCartModal.jsx
+    |   |   ClearCartModal.jsx
+    |   |   MessageToast.jsx
+    |   |   Pagination.jsx
+    |   |   RemoveCartItemModal.jsx
+    |   |   
+    |   +---FullPageLoading
+    |   |       FullPageLoading.css
+    |   |       index.jsx
+    |   |       
+    |   \---ProductModal
+    |           index.jsx
+    |           ProductModal.css
+    |           
+    +---layouts
+    |       AdminLayout.jsx
+    |       FrontendLayout.jsx
+    |       
+    +---pages
+    |   +---admin
+    |   |       AdminOrders.jsx
+    |   |       AdminProducts.jsx
+    |   |       
+    |   \---front
+    |       |   Cart.jsx
+    |       |   FrontendLayout.jsx
+    |       |   Home.jsx
+    |       |   NotFound.jsx
+    |       |   Product.jsx
+    |       |   SingleProduct.jsx
+    |       |   
+    |       \---Login
+    |               index.jsx
+    |               Login.css
+    |               
+    +---store
+    |       messageSlice.js
+    |       store.js
+    |       
+    \---utils
+            auth.js
+```
 
 **根目錄**
 
@@ -144,25 +217,38 @@
     - `index.jsx`：登入頁面的主要元件。
     - `Login.css`：登入頁面的樣式檔案。
 
+**`store/` 資料夾**
+
+- `messageSlice.js`：包含 Redux 切片，用於管理訊息狀態。
+- `store.js`：設定 Redux store，並整合所有的切片。
+
 **`utils/` 資料夾**
 
 - `auth.js`：包含身份驗證相關的函式。
 
+### 任務描述
+
 ## 主線任務說明
 
-- 使用 Vite 完成路由設定，前台頁面：
+在先前的課程中，已經介紹了登入、產品列表的製作，請同學完成剩下功能，並整合至 Vite 中。
 
-- 首頁
-- 產品頁
-- 產品詳細頁
-- 購物車
+這週也會練習使用 Redux Toolkit 中的技巧，來完成通知訊息的功能。
 
-- 在 Vite 中完成登入、前台表單驗證功能
+另外還要請大家確定好最終作業的主題唷！
 
-- 建立 .env 檔案內容
+**後台**
 
-VITE_API=
-VITE_APIPATH=
+**產品頁面：**
+
+- 串接取得、新增、刪除、更新產品 API
+- 啟用狀態顯示
+- Modal 細節欄位
+- 上傳圖片API
+- 分頁功能
+
+**通知訊息**
+
+![image](./images/MTc1Mzc2NDQzNDQ4MzQ1MzM5MDY=_2024-11-28T04_00_21Z.png)
 
 作業須符合此[作業規範](https://hackmd.io/XbKPYiE9Ru6G0sAfB5PBJw)
 
@@ -186,6 +272,6 @@ VITE_APIPATH=
 
 ### 挑戰等級
 
-- LV 1｜參考範例程式碼，完成路由功能，並可瀏覽所有前台頁面（請提供導覽選單，進入頁面僅需要標題，不必加入內容）
-- LV 2｜前台顯示完整的產品列表，並可進入產品細節頁面
-- LV 3｜完成以上功能＋前台表單及登入頁面及登入驗證功能
+- LV 1｜完成後台登入/ 登出、產品頁面 + 訊息通知功能
+- LV 2｜完成 LV1 功能＋主題發想內容
+- LV 3｜完成以上功能及撰寫完整的產品文案、圖片

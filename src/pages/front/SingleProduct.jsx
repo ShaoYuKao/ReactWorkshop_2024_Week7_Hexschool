@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import FullPageLoading from '@/components/FullPageLoading';
+import { useDispatch } from 'react-redux';
+import { createAsyncMessage, MESSAGE_TYPES } from '@/store/messageSlice';
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const API_PATH = import.meta.env.VITE_API_PATH;
@@ -11,6 +13,7 @@ function SingleProduct() {
   const navigate = useNavigate();
   const [selectedProduct, setSelectedProduct] = useState(null); // 選擇的產品
   const [loading, setLoading] = useState(false); // 加載狀態
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (false === !!id) {
@@ -31,7 +34,7 @@ function SingleProduct() {
       })
       .catch(error => {
         console.error('Error fetching product details:', error);
-        alert('取得產品細節失敗!!');
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: '取得產品細節失敗: ' + error }));
         navigate('/product');
       })
       .finally(() => {

@@ -55,7 +55,7 @@ export const createAsyncMessage = createAsyncThunk(
 // 訊息類型的常數
 export const MESSAGE_TYPES = {
   SUCCESS: 'success',
-  FAIL: 'fail',
+  FAIL: 'danger',
   WARNING: 'warning',
 };
 

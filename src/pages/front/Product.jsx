@@ -5,6 +5,8 @@ import * as bootstrap from "bootstrap";
 import FullPageLoading from '@/components/FullPageLoading';
 import Pagination from '@/components/Pagination';
 import AddToCartModal from '@/components/AddToCartModal';
+import { useDispatch } from 'react-redux';
+import { createAsyncMessage, MESSAGE_TYPES } from '@/store/messageSlice';
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const API_PATH = import.meta.env.VITE_API_PATH;
@@ -20,6 +22,7 @@ function Product() {
   const [cartQty, setCartQty] = useState(1);  // 加到購物車的數量
   const [mode, setMode] = useState('add'); // 模式
   const addToCartModalRef = useRef(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     addToCartModalRef.current = new bootstrap.Modal(document.getElementById('addToCartModal'), {
@@ -34,7 +37,7 @@ function Product() {
       })
       .catch(error => {
         console.error('Error fetching products:', error);
-        alert('取得產品資料失敗!!');
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: '取得產品資料失敗: ' + error }));
       })
       .finally(() => {
         setLoading(false); // 結束加載
@@ -77,7 +80,7 @@ function Product() {
       })
       .catch(error => {
         console.error('Error fetching product details:', error);
-        alert('加到購物車失敗!!');
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: '加到購物車失敗: ' + error }));
       })
       .finally(() => {
         setLoading(false); // 結束加載
@@ -97,12 +100,12 @@ function Product() {
       }
     })
       .then(response => {
-        alert('已加入購物車');
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.SUCCESS, message: '已加入購物車' }));
         addToCartModalRef.current.hide();
       })
       .catch(error => {
         console.error('Error adding to cart:', error);
-        alert('加入購物車失敗!!');
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: '加入購物車失敗: ' + error }));
       })
       .finally(() => {
         setLoading(false); // 結束加載

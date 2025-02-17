@@ -6,6 +6,8 @@ import FullPageLoading from '@/components/FullPageLoading';
 import ClearCartModal from '@/components/ClearCartModal';
 import AddToCartModal from '@/components/AddToCartModal';
 import RemoveCartItemModal from '@/components/RemoveCartItemModal';
+import { useDispatch } from 'react-redux';
+import { createAsyncMessage, MESSAGE_TYPES } from '@/store/messageSlice';
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const API_PATH = import.meta.env.VITE_API_PATH;
@@ -22,6 +24,7 @@ function Cart() {
   const [mode, setMode] = useState('add'); // 模式
   const [removeCartItem, setRemoveCartItem] = useState(null); // 要刪除的購物車項目
   const addToCartModalRef = useRef(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     addToCartModalRef.current = new bootstrap.Modal(document.getElementById('addToCartModal'), {
@@ -44,7 +47,7 @@ function Cart() {
       })
       .catch(error => {
         console.error('Error fetching cart:', error);
-        alert('取得購物車資料失敗!!');
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: '取得購物車資料失敗!!' }));
       })
       .finally(() => {
         setLoading(false); // 結束加載
@@ -61,7 +64,7 @@ function Cart() {
    */
   const onSubmit = (data) => {
     if (cartItems.length <= 0) {
-      alert('購物車內無資料!!');
+      dispatch(createAsyncMessage({ type: MESSAGE_TYPES.WARNING, message: '購物車內無資料!!' }));
       return;
     }
     setLoading(true); // 開始加載
@@ -77,13 +80,13 @@ function Cart() {
       }
     })
     .then(response => {
-      alert('訂單已送出');
+      dispatch(createAsyncMessage({ type: MESSAGE_TYPES.SUCCESS, message: '訂單已送出' }));
       reset(); // 清空表單欄位
       fetchCart(); // 更新購物車資訊
     })
     .catch(error => {
       console.error('Error submitting order:', error);
-      alert('送出訂單失敗!!');
+      dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: '送出訂單失敗!!' }));
     })
     .finally(() => {
       setLoading(false); // 結束加載
@@ -143,14 +146,14 @@ function Cart() {
     setLoading(true); // 開始加載
     axios.delete(`${API_BASE}/api/${API_PATH}/carts`)
       .then(response => {
-        alert('已清空購物車');
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.SUCCESS, message: '已清空購物車' }));
         const clearCartModal = bootstrap.Modal.getInstance(document.getElementById('clearCartModal'));
         clearCartModal.hide();
         fetchCart(); // 更新購物車資訊
       })
       .catch(error => {
         console.error('Error clearing cart:', error);
-        alert('清空購物車失敗!!');
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: '清空購物車失敗!!' }));
       })
       .finally(() => {
         setLoading(false); // 結束加載
@@ -177,13 +180,13 @@ function Cart() {
       }
     })
       .then(response => {
-        alert('已更新購物車');
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.SUCCESS, message: '已更新購物車' }));
         addToCartModalRef.current.hide();
         fetchCart(); // 更新購物車資訊
       })
       .catch(error => {
         console.error('Error updating cart:', error);
-        alert('更新購物車失敗!!');
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: '更新購物車失敗!!' }));
       })
       .finally(() => {
         setLoading(false); // 結束加載
@@ -211,14 +214,14 @@ function Cart() {
     setLoading(true); // 開始加載
     axios.delete(`${API_BASE}/api/${API_PATH}/cart/${removeCartItem.id}`)
       .then(response => {
-        alert('已刪除購物車項目');
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.SUCCESS, message: '已刪除購物車項目' }));
         const removeCartItemModal = bootstrap.Modal.getInstance(document.getElementById('removeCartItemModal'));
         removeCartItemModal.hide();
         fetchCart(); // 更新購物車資訊
       })
       .catch(error => {
         console.error('Error removing cart item:', error);
-        alert('刪除購物車項目失敗!!');
+        dispatch(createAsyncMessage({ type: MESSAGE_TYPES.FAIL, message: '刪除購物車項目失敗!!' }));
       })
       .finally(() => {
         setLoading(false); // 結束加載

@@ -84,7 +84,7 @@ function AdminLayout() {
       
       <footer className="bg-light text-center py-3">
         <div className="container">
-          <p className="text-center">© 2024 React 作品實戰冬季班 第六週</p>
+          <p className="text-center">© 2024 React 作品實戰冬季班 第七週</p>
         </div>
       </footer>
     </>

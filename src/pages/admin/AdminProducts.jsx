@@ -6,6 +6,8 @@ import { getToken, clearToken, checkAdmin, redirectToLogin } from '@/utils/auth'
 import FullPageLoading from '@/components/FullPageLoading';
 import ProductModal from '@/components/ProductModal';
 import Pagination from '@/components/Pagination';
+import { useDispatch } from 'react-redux';
+import { createAsyncMessage, actionType } from '@/store/messageSlice';
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const API_PATH = import.meta.env.VITE_API_PATH;
@@ -31,6 +33,7 @@ function AdminProducts() {
   const [page, setPage] = useState(1);  // 當前頁數
   const [totalPages, setTotalPages] = useState(1); // 總頁數
   const productModalRef = useRef(null); // 產品 Modal 的 ref
+  const dispatch = useDispatch();
 
   const [tempProduct, setTempProduct] = useState({
     ...initTempProduct
@@ -135,12 +138,12 @@ function AdminProducts() {
     }
 
     if (false === checkPrice(tempProduct.origin_price)) {
-      alert("原價請輸入大於 0 的數字");
+      dispatch(createAsyncMessage({ type: actionType.warning, message: "原價請輸入大於 0 的數字" }));
       return;
     }
 
     if (false === checkPrice(tempProduct.price)) {
-      alert("售價請輸入大於 0 的數字");
+      dispatch(createAsyncMessage({ type: actionType.warning, message: "售價請輸入大於 0 的數字" }));
       return;
     }
 
@@ -168,11 +171,11 @@ function AdminProducts() {
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
-      alert(tempProduct.id ? "編輯商品成功" : "新增商品成功");
+      dispatch(createAsyncMessage({ type: actionType.success, message: tempProduct.id ? "編輯商品成功" : "新增商品成功" }));
       clearTempProduct();
       fetchProducts();
     } catch (error) {
-      alert((tempProduct.id ? "編輯" : "新增") + "商品失敗: " + error);
+      dispatch(createAsyncMessage({ type: actionType.fail, message: (tempProduct.id ? "編輯" : "新增") + "商品失敗: " + error }));
       openProductModal();
     } finally {
       setLoading(false);
@@ -186,27 +189,27 @@ function AdminProducts() {
   const checkRequired = () => {
     if (!tempProduct.imageUrl || !tempProduct.title || !tempProduct.category || !tempProduct.unit || !tempProduct.origin_price || !tempProduct.price) {
       if (!tempProduct.imageUrl) {
-        alert("請輸入圖片網址");
+        dispatch(createAsyncMessage({ type: actionType.warning, message: "請輸入圖片網址" }));
         return false;
       };
       if (!tempProduct.title) {
-        alert("請輸入標題");
+        dispatch(createAsyncMessage({ type: actionType.warning, message: "請輸入標題" }));
         return false;
       }
       if (!tempProduct.category) {
-        alert("請輸入分類");
+        dispatch(createAsyncMessage({ type: actionType.warning, message: "請輸入分類" }));
         return false;
       }
       if (!tempProduct.unit) {
-        alert("請輸入單位");
+        dispatch(createAsyncMessage({ type: actionType.warning, message: "請輸入單位" }));
         return false;
       }
       if (!tempProduct.origin_price) {
-        alert("請輸入原價");
+        dispatch(createAsyncMessage({ type: actionType.warning, message: "請輸入原價" }));
         return false;
       }
       if (!tempProduct.price) {
-        alert("請輸入售價");
+        dispatch(createAsyncMessage({ type: actionType.warning, message: "請輸入售價" }));
         return false;
       }
     }
@@ -263,6 +266,7 @@ function AdminProducts() {
       setTotalPages(total_pages);
     } catch (error) {
       console.error("取得產品資料失敗", error);
+      dispatch(createAsyncMessage({ type: actionType.fail, message: "取得產品資料失敗: " + error }));
     } finally {
       setLoading(false);
     }
@@ -308,10 +312,10 @@ function AdminProducts() {
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
-      alert("刪除商品成功");
+      dispatch(createAsyncMessage({ type: actionType.success, message: "刪除商品成功" }));
       fetchProducts();
     } catch (error) {
-      alert("刪除商品失敗: " + error);
+      dispatch(createAsyncMessage({ type: actionType.fail, message: "刪除商品失敗: " + error }));
     } finally {
       setLoading(false);
     }

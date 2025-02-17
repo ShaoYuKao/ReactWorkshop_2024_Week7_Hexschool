@@ -5,7 +5,7 @@ import path from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/ReactWorkshop_2024_Week6_Hexschool/', // 替換為您的 repository 名稱
+  base: '/ReactWorkshop_2024_Week7_Hexschool/', // 替換為您的 repository 名稱
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
